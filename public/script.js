@@ -1,49 +1,47 @@
-async function init() {
-    const userRes = await fetch('/api/user');
-    const user = await userRes.json();
+async function start() {
+    const uRes = await fetch('/api/user');
+    const user = await uRes.json();
     if (!user) { window.location.href = '/login.html'; return; }
 
-    // If Alumni, show their received requests
+    document.getElementById('user-display').innerText = `User: ${user.name}`;
+
     if (user.role === 'alumni') {
-        loadRequests();
-        document.getElementById('alumni-section').style.display = 'block';
+        document.getElementById('alumni-dashboard').style.display = 'block';
+        loadMyRequests(user.id);
     }
 
-    const mentorRes = await fetch('/api/mentors');
-    const mentors = await mentorRes.json();
-    renderMentors(mentors);
+    const mRes = await fetch('/api/mentors');
+    const mentors = await mRes.json();
+    displayMentors(mentors);
 }
 
-function renderMentors(mentors) {
+function displayMentors(list) {
     const grid = document.getElementById('mentorGrid');
-    grid.innerHTML = mentors.map(m => `
+    grid.innerHTML = list.map(m => `
         <div class="card">
             <span class="badge">${m.expertise}</span>
             <h2>${m.name}</h2>
             <p><strong>${m.company}</strong></p>
-            <button class="btn-connect" onclick="sendConnect(${m.user_id}, '${m.name}')">Request Mentorship</button>
+            <button class="btn-connect" onclick="requestMentorship(${m.user_id})">Connect</button>
         </div>
     `).join('');
 }
 
-async function sendConnect(mentorId, name) {
+async function requestMentorship(id) {
     const res = await fetch('/api/connect', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mentor_id: mentorId })
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ mentor_id: id })
     });
-    if (res.ok) alert(`Request sent to ${name}! They will see it on their dashboard.`);
+    if(res.ok) alert("Request Sent!");
 }
 
-async function loadRequests() {
+async function loadMyRequests() {
     const res = await fetch('/api/my-requests');
-    const data = await res.json();
-    const reqDiv = document.getElementById('request-list');
-    reqDiv.innerHTML = data.map(r => `
-        <div style="padding:10px; border-bottom:1px solid #ddd;">
-            Student <strong>${r.student_name}</strong> wants to connect.
-        </div>
-    `).join('') || "No requests yet.";
+    const reqs = await res.json();
+    document.getElementById('request-list').innerHTML = reqs.map(r => `
+        <div class="request-item">Student <b>${r.student_name}</b> sent you a request!</div>
+    `).join('') || "No requests found.";
 }
 
-init();
+start();
