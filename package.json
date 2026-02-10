@@ -1,7 +1,6 @@
 {
   "name": "alumni-portal",
   "version": "1.0.0",
-  "description": "ISE Alumni Portal",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
