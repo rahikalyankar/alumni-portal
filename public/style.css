@@ -1,51 +1,219 @@
+/* Import a professional font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap');
+
 :root {
     --primary: #6366f1;
-    --dark: #1e293b;
-    --light: #f8fafc;
-    --accent: #4f46e5;
+    --primary-dark: #4f46e5;
+    --secondary: #94a3b8;
+    --success: #10b981;
+    --bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --glass: rgba(255, 255, 255, 0.7);
 }
 
-body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--light); margin: 0; color: var(--dark); }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
 
-nav { 
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 1.5rem 8%; background: rgba(255,255,255,0.8);
-    backdrop-filter: blur(10px); sticky; top: 0; z-index: 1000;
+body {
+    background-color: var(--bg);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+/* --- NAVIGATION --- */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 8%;
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+}
+
+#user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logout-btn {
+    text-decoration: none;
+    color: #ef4444;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.logout-btn:hover {
+    background: #fef2f2;
+}
+
+/* --- HEADER & SEARCH --- */
+header {
+    text-align: center;
+    padding: 60px 20px 40px;
+    background: radial-gradient(circle at top right, #e0e7ff, transparent);
+}
+
+header h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: #0f172a;
+}
+
+.search-container {
+    max-width: 600px;
+    margin: 30px auto;
+}
+
+.search-container input {
+    width: 100%;
+    padding: 18px 30px;
+    border-radius: 100px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+.search-container input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.15);
+}
+
+/* --- AUTH PAGES (Login/Signup) --- */
+.auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
 }
 
 .auth-container {
-    max-width: 450px; margin: 80px auto; background: white;
-    padding: 40px; border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    background: white;
+    padding: 40px;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 420px;
 }
 
-.mentor-grid { 
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 30px; padding: 40px 8%; 
+.auth-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 800;
+}
+
+.auth-container input, .auth-container select, .auth-container textarea {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+}
+
+/* --- MENTOR CARDS --- */
+.mentor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+    padding: 20px 8% 80px;
 }
 
 .card {
-    background: white; padding: 30px; border-radius: 20px;
-    border: 1px solid #f1f5f9; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.card:hover { transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1); }
-
-.badge { 
-    background: #eef2ff; color: var(--primary); 
-    padding: 6px 14px; border-radius: 100px; font-weight: 700; font-size: 0.75rem;
+.card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+    border-color: var(--primary);
 }
 
+.badge {
+    background: #eef2ff;
+    color: var(--primary);
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+}
+
+.card h2 {
+    margin: 15px 0 5px;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.company {
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+/* --- BUTTONS --- */
 .btn-connect {
-    width: 100%; padding: 14px; border-radius: 12px; border: none;
-    background: var(--primary); color: white; font-weight: 600; cursor: pointer;
-    margin-top: 20px; transition: 0.3s;
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-.btn-connect:hover { background: var(--accent); letter-spacing: 1px; }
-
-input, select, textarea {
-    width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #e2e8f0;
-    border-radius: 12px; font-size: 1rem; transition: 0.3s;
+.btn-connect:hover {
+    background: var(--primary-dark);
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
 }
 
-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+/* --- ALUMNI DASHBOARD SECTION --- */
+#alumni-section {
+    background: white;
+    margin: 20px 8%;
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px dashed var(--primary);
+}
+
+.request-item {
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
