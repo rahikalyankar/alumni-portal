@@ -1,20 +1,18 @@
 const express = require('express');
 const { Pool } = require('pg');
-const path = require('path');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const app = express();
 
-// 1. Database Connection
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 
-// 2. Database Initialization (Fixed Tables)
+// --- AUTOMATIC DATABASE REPAIR ---
 async function initDb() {
     try {
-        // Create Users Table
+        // 1. Create Users Table
         await pool.query(`
             CREATE TABLE IF NOT EXISTS users (
                 id SERIAL PRIMARY KEY, 
@@ -24,18 +22,31 @@ async function initDb() {
                 role TEXT NOT NULL
             );
         `);
-        // Create Mentors Table (Linked to users.id)
+
+        // 2. Create Mentors Table
         await pool.query(`
             CREATE TABLE IF NOT EXISTS mentors (
                 id SERIAL PRIMARY KEY, 
-                user_id INTEGER UNIQUE NOT NULL, 
-                name TEXT NOT NULL, 
+                user_id INTEGER UNIQUE, 
+                name TEXT, 
                 expertise TEXT, 
                 company TEXT, 
                 bio TEXT
             );
         `);
-        // Create Requests Table
+
+        // 3. REPAIR: Force add user_id if it's missing (Fixes your specific error)
+        await pool.query(`
+            DO $$ 
+            BEGIN 
+                IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                               WHERE table_name='mentors' AND column_name='user_id') THEN
+                    ALTER TABLE mentors ADD COLUMN user_id INTEGER UNIQUE;
+                END IF;
+            END $$;
+        `);
+
+        // 4. Create Requests Table
         await pool.query(`
             CREATE TABLE IF NOT EXISTS requests (
                 id SERIAL PRIMARY KEY, 
@@ -44,35 +55,31 @@ async function initDb() {
                 status TEXT DEFAULT 'Pending'
             );
         `);
-        console.log("✅ Database tables initialized successfully");
+        
+        console.log("✅ Database tables initialized and REPAIRED");
     } catch (e) {
         console.error("❌ DB Initialization Error:", e);
     }
 }
 initDb();
 
-// 3. Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(session({ 
-    secret: 'ise_connect_secret_123', 
+    secret: 'ise_connect_secret', 
     resave: false, 
-    saveUninitialized: true,
-    cookie: { secure: false } // Set to true only if using HTTPS
+    saveUninitialized: true 
 }));
 
-// 4. Auth Routes
+// --- AUTH ROUTES ---
 app.post('/auth/signup', async (req, res) => {
     const { name, email, password, role } = req.body;
     try {
         const hash = await bcrypt.hash(password, 10);
         await pool.query('INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4)', [name, email, hash, role]);
         res.redirect('/login.html');
-    } catch (e) {
-        console.error("Signup Error:", e);
-        res.status(500).send("Error: User might already exist.");
-    }
+    } catch (e) { res.status(500).send("User already exists."); }
 });
 
 app.post('/auth/login', async (req, res) => {
@@ -81,74 +88,54 @@ app.post('/auth/login', async (req, res) => {
         const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
         if (result.rows[0] && await bcrypt.compare(password, result.rows[0].password)) {
             req.session.user = result.rows[0];
-            console.log("User logged in:", req.session.user.name);
             res.redirect('/portal.html');
-        } else {
-            res.send("Invalid email or password.");
-        }
-    } catch (e) {
-        console.error("Login Error:", e);
-        res.status(500).send("Internal Server Error during login.");
-    }
+        } else { res.send("Invalid credentials."); }
+    } catch (e) { res.status(500).send("Login error."); }
 });
 
 app.get('/auth/logout', (req, res) => {
     req.session.destroy(() => res.redirect('/login.html'));
 });
 
-// 5. API Routes
+// --- API ROUTES ---
 app.get('/api/user', (req, res) => res.json(req.session.user || null));
 
 app.get('/api/mentors', async (req, res) => {
-    try {
-        const result = await pool.query('SELECT * FROM mentors');
-        res.json(result.rows);
-    } catch (e) { res.status(500).json([]); }
+    const result = await pool.query('SELECT * FROM mentors');
+    res.json(result.rows);
 });
 
-// --- THE FUNCTION CAUSING YOUR ERROR (FIXED) ---
 app.post('/api/register-mentor', async (req, res) => {
     if (!req.session.user || req.session.user.role !== 'alumni') {
-        return res.status(403).send("Error: You must be logged in as an Alumni to do this.");
+        return res.status(403).send("Unauthorized");
     }
-
     const { expertise, company, bio } = req.body;
-    const userId = req.session.user.id;
-    const userName = req.session.user.name;
-
     try {
-        // Using ON CONFLICT to prevent "Duplicate Key" errors
         await pool.query(`
             INSERT INTO mentors (user_id, name, expertise, company, bio) 
             VALUES ($1, $2, $3, $4, $5) 
-            ON CONFLICT (user_id) 
-            DO UPDATE SET expertise = EXCLUDED.expertise, company = EXCLUDED.company, bio = EXCLUDED.bio`, 
-            [userId, userName, expertise, company, bio]
+            ON CONFLICT (user_id) DO UPDATE SET expertise=$3, company=$4, bio=$5`, 
+            [req.session.user.id, req.session.user.name, expertise, company, bio]
         );
-        console.log(`✅ Profile updated for: ${userName}`);
         res.redirect('/portal.html');
-    } catch (e) {
-        console.error("❌ Profile Saving Error:", e);
-        res.status(500).send("Error saving profile: " + e.message);
+    } catch (e) { 
+        console.error(e);
+        res.status(500).send("Error saving profile: " + e.message); 
     }
 });
 
 app.post('/api/connect', async (req, res) => {
-    if (!req.session.user) return res.status(401).send("Please login.");
+    if (!req.session.user) return res.status(401).send("Login first");
     const { mentor_id } = req.body;
-    try {
-        await pool.query('INSERT INTO requests (student_name, mentor_id) VALUES ($1, $2)', [req.session.user.name, mentor_id]);
-        res.json({ success: true });
-    } catch (e) { res.status(500).json({ success: false }); }
+    await pool.query('INSERT INTO requests (student_name, mentor_id) VALUES ($1, $2)', [req.session.user.name, mentor_id]);
+    res.json({ success: true });
 });
 
 app.get('/api/my-requests', async (req, res) => {
     if (!req.session.user) return res.json([]);
-    try {
-        const result = await pool.query('SELECT * FROM requests WHERE mentor_id = $1', [req.session.user.id]);
-        res.json(result.rows);
-    } catch (e) { res.json([]); }
+    const result = await pool.query('SELECT * FROM requests WHERE mentor_id = $1', [req.session.user.id]);
+    res.json(result.rows);
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`🚀 Server running on port ${port}`));
+app.listen(port, () => console.log(`🚀 Server on port ${port}`));
