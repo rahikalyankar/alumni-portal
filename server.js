@@ -9,54 +9,36 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-// --- AUTOMATIC DATABASE REPAIR ---
+// --- DATABASE REPAIR LOGIC ---
 async function initDb() {
     try {
-        // 1. Create Users Table
-        await pool.query(`
-            CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY KEY, 
-                name TEXT NOT NULL, 
-                email TEXT UNIQUE NOT NULL, 
-                password TEXT NOT NULL, 
-                role TEXT NOT NULL
-            );
-        `);
+        // 1. Ensure tables exist
+        await pool.query(`CREATE TABLE IF NOT EXISTS users (id SERIAL PRIMARY KEY, name TEXT, email TEXT UNIQUE, password TEXT, role TEXT);`);
+        await pool.query(`CREATE TABLE IF NOT EXISTS mentors (id SERIAL PRIMARY KEY);`); // Start with basic table
+        await pool.query(`CREATE TABLE IF NOT EXISTS requests (id SERIAL PRIMARY KEY, student_name TEXT, mentor_id INTEGER, status TEXT DEFAULT 'Pending');`);
 
-        // 2. Create Mentors Table
-        await pool.query(`
-            CREATE TABLE IF NOT EXISTS mentors (
-                id SERIAL PRIMARY KEY, 
-                user_id INTEGER UNIQUE, 
-                name TEXT, 
-                expertise TEXT, 
-                company TEXT, 
-                bio TEXT
-            );
-        `);
+        // 2. REPAIR: Individually check and add every missing column
+        const columns = [
+            { name: 'user_id', type: 'INTEGER UNIQUE' },
+            { name: 'name', type: 'TEXT' },
+            { name: 'expertise', type: 'TEXT' },
+            { name: 'company', type: 'TEXT' },
+            { name: 'bio', type: 'TEXT' }
+        ];
 
-        // 3. REPAIR: Force add user_id if it's missing (Fixes your specific error)
-        await pool.query(`
-            DO $$ 
-            BEGIN 
-                IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                               WHERE table_name='mentors' AND column_name='user_id') THEN
-                    ALTER TABLE mentors ADD COLUMN user_id INTEGER UNIQUE;
-                END IF;
-            END $$;
-        `);
-
-        // 4. Create Requests Table
-        await pool.query(`
-            CREATE TABLE IF NOT EXISTS requests (
-                id SERIAL PRIMARY KEY, 
-                student_name TEXT NOT NULL, 
-                mentor_id INTEGER NOT NULL, 
-                status TEXT DEFAULT 'Pending'
-            );
-        `);
+        for (const col of columns) {
+            await pool.query(`
+                DO $$ 
+                BEGIN 
+                    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                                   WHERE table_name='mentors' AND column_name='${col.name}') THEN
+                        ALTER TABLE mentors ADD COLUMN ${col.name} ${col.type};
+                    END IF;
+                END $$;
+            `);
+        }
         
-        console.log("✅ Database tables initialized and REPAIRED");
+        console.log("✅ Database structure verified and repaired!");
     } catch (e) {
         console.error("❌ DB Initialization Error:", e);
     }
@@ -66,13 +48,12 @@ initDb();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
-app.use(session({ 
-    secret: 'ise_connect_secret', 
-    resave: false, 
-    saveUninitialized: true 
-}));
+app.use(session({ secret: 'ise_connect_secret', resave: false, saveUninitialized: true }));
 
-// --- AUTH ROUTES ---
+// --- ROUTES ---
+
+app.get('/api/user', (req, res) => res.json(req.session.user || null));
+
 app.post('/auth/signup', async (req, res) => {
     const { name, email, password, role } = req.body;
     try {
@@ -93,22 +74,8 @@ app.post('/auth/login', async (req, res) => {
     } catch (e) { res.status(500).send("Login error."); }
 });
 
-app.get('/auth/logout', (req, res) => {
-    req.session.destroy(() => res.redirect('/login.html'));
-});
-
-// --- API ROUTES ---
-app.get('/api/user', (req, res) => res.json(req.session.user || null));
-
-app.get('/api/mentors', async (req, res) => {
-    const result = await pool.query('SELECT * FROM mentors');
-    res.json(result.rows);
-});
-
 app.post('/api/register-mentor', async (req, res) => {
-    if (!req.session.user || req.session.user.role !== 'alumni') {
-        return res.status(403).send("Unauthorized");
-    }
+    if (!req.session.user || req.session.user.role !== 'alumni') return res.status(403).send("Unauthorized");
     const { expertise, company, bio } = req.body;
     try {
         await pool.query(`
@@ -120,8 +87,13 @@ app.post('/api/register-mentor', async (req, res) => {
         res.redirect('/portal.html');
     } catch (e) { 
         console.error(e);
-        res.status(500).send("Error saving profile: " + e.message); 
+        res.status(500).send("Error: " + e.message); 
     }
+});
+
+app.get('/api/mentors', async (req, res) => {
+    const result = await pool.query('SELECT * FROM mentors');
+    res.json(result.rows);
 });
 
 app.post('/api/connect', async (req, res) => {
@@ -137,5 +109,6 @@ app.get('/api/my-requests', async (req, res) => {
     res.json(result.rows);
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`🚀 Server on port ${port}`));
+app.get('/auth/logout', (req, res) => req.session.destroy(() => res.redirect('/login.html')));
+
+app.listen(process.env.PORT || 3000);
