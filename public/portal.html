@@ -2,32 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Portal | ISE Connect</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISE Connect | Alumni Portal</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <nav>
-        <div class="logo">ISE Connect</div>
+        <div class="logo">ISE CONNECT</div>
         <div id="user-info">
-            <span id="welcome-msg"></span>
-            <a href="/auth/logout" style="margin-left:15px; color:red;">Logout</a>
+            <span id="welcome-msg" style="font-weight: 600;"></span>
+            <a href="/auth/logout" class="logout-btn">Logout</a>
         </div>
     </nav>
 
-    <section id="alumni-registration" style="display:none; background:#e0f2fe; padding:20px; margin:20px 10%; border-radius:12px;">
-        <h3>Alumni Dashboard: Update Your Mentor Profile</h3>
-        <form action="/api/register-alumni" method="POST" style="display:grid; gap:10px;">
-            <input type="text" name="expertise" placeholder="Your Expertise (e.g. Java, AI, Web)" required>
-            <input type="text" name="company" placeholder="Current Company (e.g. Google, TCS)" required>
-            <textarea name="bio" placeholder="Short bio for students..."></textarea>
-            <button type="submit" class="btn-connect">Update Profile</button>
+    <div id="alumni-section" style="display:none;">
+        <h2 style="margin-bottom: 20px;">Mentorship Requests</h2>
+        <div id="request-list">
+            <p style="color: var(--text-muted);">Checking for requests...</p>
+        </div>
+        
+        <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;">
+        
+        <h3>Update Your Professional Profile</h3>
+        <form action="/api/register-alumni" method="POST" style="margin-top:15px;">
+            <input type="text" name="expertise" placeholder="Skills (e.g. Python, Machine Learning)" required>
+            <input type="text" name="company" placeholder="Current Company / University" required>
+            <textarea name="bio" placeholder="Briefly describe how you can help students..."></textarea>
+            <button type="submit" class="btn-connect" style="width: 200px;">Save Profile</button>
         </form>
-    </section>
+    </div>
 
     <header>
-        <h1>Connect with Alumni</h1>
+        <h1>Alumni Mentors</h1>
+        <p style="color: var(--text-muted);">Find and connect with ISE graduates working in your dream companies.</p>
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search by name, company, or skill...">
+            <input type="text" id="searchInput" placeholder="Search by name, company, or expertise...">
         </div>
     </header>
 
