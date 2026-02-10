@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal | ISE Connect</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">ISE Connect</div>
+        <div id="user-info">
+            <span id="welcome-msg"></span>
+            <a href="/auth/logout" style="margin-left:15px; color:red;">Logout</a>
+        </div>
+    </nav>
+
+    <section id="alumni-registration" style="display:none; background:#e0f2fe; padding:20px; margin:20px 10%; border-radius:12px;">
+        <h3>Alumni Dashboard: Update Your Mentor Profile</h3>
+        <form action="/api/register-alumni" method="POST" style="display:grid; gap:10px;">
+            <input type="text" name="expertise" placeholder="Your Expertise (e.g. Java, AI, Web)" required>
+            <input type="text" name="company" placeholder="Current Company (e.g. Google, TCS)" required>
+            <textarea name="bio" placeholder="Short bio for students..."></textarea>
+            <button type="submit" class="btn-connect">Update Profile</button>
+        </form>
+    </section>
+
+    <header>
+        <h1>Connect with Alumni</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by name, company, or skill...">
+        </div>
+    </header>
+
+    <main class="mentor-grid" id="mentorGrid">
+        </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
