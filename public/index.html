@@ -3,48 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISE Alumni Portal</title>
+    <title>Alumni Portal | ISE Connect</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <nav>
         <div class="logo">ISE Connect</div>
+        <div style="color: var(--secondary)">Mentors Portal</div>
     </nav>
 
     <header>
-        <h1>Alumni Mentorship Network</h1>
-        <p>Live data fetched from PostgreSQL</p>
+        <h1>Find Your Mentor</h1>
+        <p>Connecting students with ISE alumni across the globe.</p>
     </header>
 
-    <main id="mentor-grid" class="container"></main>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search by name, company, or expertise...">
+    </div>
 
-    <script>
-        async function fetchMentors() {
-            const container = document.getElementById('mentor-grid');
-            try {
-                const response = await fetch('/api/mentors');
-                const mentors = await response.json();
+    <main class="mentor-grid" id="mentorGrid">
+        </main>
 
-                if (mentors.length === 0) {
-                    container.innerHTML = "<p>No mentors found in database.</p>";
-                    return;
-                }
-
-                container.innerHTML = mentors.map(m => `
-                    <div class="card">
-                        <span class="badge">${m.expertise}</span>
-                        <h2>${m.name}</h2>
-                        <p class="company">Works at: <b>${m.company}</b></p>
-                        <button onclick="alert('Connecting with ${m.name}...')">Request Meeting</button>
-                    </div>
-                `).join('');
-            } catch (error) {
-                container.innerHTML = "<p>Error loading mentors. Check your connection.</p>";
-            }
-        }
-
-        // Run the function when the page loads
-        fetchMentors();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
