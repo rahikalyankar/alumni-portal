@@ -2,24 +2,68 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Join ISE Connect</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISE Connect | Create Account</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .auth-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .auth-container h1 { color: #6366f1; margin-bottom: 25px; }
+        .auth-container input, .auth-container select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        .signup-btn {
+            width: 100%;
+            padding: 12px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .signup-btn:hover { background: #4f46e5; }
+        .footer-link { margin-top: 20px; font-size: 14px; color: #64748b; }
+        .footer-link a { color: #6366f1; text-decoration: none; font-weight: bold; }
+    </style>
 </head>
-<body class="auth-page">
+<body style="background-color: #f8fafc;">
+
     <div class="auth-container">
-        <h2>Create Account</h2>
+        <h1>Create Account</h1>
+        <p style="color: #64748b; margin-bottom: 20px;">Join the ISE Mentorship Network</p>
+        
         <form action="/auth/signup" method="POST">
             <input type="text" name="name" placeholder="Full Name" required>
             <input type="email" name="email" placeholder="College Email" required>
             <input type="password" name="password" placeholder="Create Password" required>
-            <label>I am a:</label>
-            <select name="role">
+            
+            <label style="display: block; text-align: left; margin-top: 10px; font-size: 14px; color: #64748b;">I am a:</label>
+            <select name="role" required>
                 <option value="student">Student</option>
-                <option value="alumni">Alumni</option>
+                <option value="alumni">Alumni / Mentor</option>
             </select>
-            <button type="submit" class="btn-connect">Sign Up</button>
+
+            <button type="submit" class="signup-btn">Sign Up</button>
         </form>
-        <p>Already have an account? <a href="login.html">Login</a></p>
+
+        <div class="footer-link">
+            Already have an account? <a href="login.html">Login here</a>
+        </div>
     </div>
+
 </body>
 </html>
