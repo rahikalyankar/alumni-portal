@@ -1,219 +1,209 @@
-/* Import a professional font */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap');
+/* Import Google Font for a modern look */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-    --primary: #6366f1;
-    --primary-dark: #4f46e5;
-    --secondary: #94a3b8;
-    --success: #10b981;
-    --bg: #f8fafc;
-    --card-bg: #ffffff;
-    --text-main: #1e293b;
-    --text-muted: #64748b;
+    --primary: #6366f1; /* Modern Indigo */
+    --primary-hover: #4f46e5;
+    --bg-light: #f8fafc;
+    --text-dark: #0f172a;
+    --text-gray: #64748b;
+    --white: #ffffff;
     --glass: rgba(255, 255, 255, 0.7);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
 }
 
 body {
-    background-color: var(--bg);
-    color: var(--text-main);
-    line-height: 1.6;
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
 }
 
-/* --- NAVIGATION --- */
+/* --- Navigation --- */
 nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 8%;
+    padding: 1.2rem 8%;
     background: var(--glass);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 100;
 }
 
 .logo {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 800;
     color: var(--primary);
     letter-spacing: -0.5px;
 }
 
 #user-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    font-size: 0.95rem;
 }
 
 .logout-btn {
     text-decoration: none;
-    color: #ef4444;
     font-weight: 600;
-    font-size: 0.9rem;
     padding: 8px 16px;
     border-radius: 8px;
-    transition: 0.2s;
+    transition: 0.3s;
 }
 
 .logout-btn:hover {
-    background: #fef2f2;
+    background: #fff1f2;
 }
 
-/* --- HEADER & SEARCH --- */
-header {
-    text-align: center;
-    padding: 60px 20px 40px;
-    background: radial-gradient(circle at top right, #e0e7ff, transparent);
+/* --- Alumni Dashboard --- */
+#alumni-section {
+    max-width: 1000px;
+    margin: 40px auto;
+    border: 1px solid rgba(99, 102, 241, 0.2) !important;
+    box-shadow: var(--shadow);
 }
 
-header h1 {
-    font-size: 3rem;
+#alumni-section h2 {
+    margin-top: 0;
     font-weight: 800;
-    margin-bottom: 10px;
-    color: #0f172a;
+    color: var(--primary);
+}
+
+#request-list {
+    margin-bottom: 25px;
+}
+
+/* Individual Request Item Style (Injected via JS) */
+.request-card {
+    background: var(--white);
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #e2e8f0;
+    transition: 0.2s;
+}
+
+.request-card:hover {
+    border-color: var(--primary);
+}
+
+/* --- Forms --- */
+form input, form textarea {
+    width: 100%;
+    padding: 12px 16px;
+    margin: 8px 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+form input:focus, form textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+form textarea {
+    height: 100px;
+    resize: none;
+}
+
+/* --- Header & Search --- */
+header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 20px;
 }
 
 .search-container {
-    max-width: 600px;
-    margin: 30px auto;
+    max-width: 500px;
+    margin: 0 auto;
 }
 
 .search-container input {
     width: 100%;
-    padding: 18px 30px;
+    padding: 15px 25px;
     border-radius: 100px;
     border: 1px solid #e2e8f0;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     font-size: 1rem;
-    transition: 0.3s;
+    box-shadow: var(--shadow);
 }
 
-.search-container input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.15);
-}
-
-/* --- AUTH PAGES (Login/Signup) --- */
-.auth-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-}
-
-.auth-container {
-    background: white;
-    padding: 40px;
-    border-radius: 24px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 420px;
-}
-
-.auth-container h2 {
-    text-align: center;
-    margin-bottom: 30px;
-    font-weight: 800;
-}
-
-.auth-container input, .auth-container select, .auth-container textarea {
-    width: 100%;
-    padding: 14px;
-    margin-bottom: 15px;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    font-size: 1rem;
-}
-
-/* --- MENTOR CARDS --- */
+/* --- Mentor Grid --- */
 .mentor-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 30px;
-    padding: 20px 8% 80px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    padding: 40px 8%;
 }
 
 .card {
-    background: var(--card-bg);
-    padding: 30px;
+    background: var(--white);
+    padding: 25px;
     border-radius: 20px;
-    border: 1px solid #f1f5f9;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.06);
-    border-color: var(--primary);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
 .badge {
-    background: #eef2ff;
-    color: var(--primary);
-    padding: 6px 14px;
-    border-radius: 100px;
+    align-self: flex-start;
+    padding: 4px 12px;
+    font-size: 0.75rem;
     font-weight: 700;
-    font-size: 0.7rem;
+    border-radius: 6px;
     text-transform: uppercase;
 }
 
 .card h2 {
+    font-size: 1.25rem;
     margin: 15px 0 5px;
-    font-size: 1.4rem;
-    font-weight: 700;
 }
 
-.company {
-    color: var(--text-muted);
-    font-weight: 500;
-    margin-bottom: 15px;
+.card p {
+    color: var(--text-gray);
+    font-size: 0.95rem;
+    margin-bottom: 20px;
 }
 
-/* --- BUTTONS --- */
+/* --- Buttons --- */
 .btn-connect {
-    width: 100%;
-    background: var(--primary);
+    background-color: var(--primary);
     color: white;
     border: none;
-    padding: 14px;
-    border-radius: 12px;
+    border-radius: 10px;
     font-weight: 700;
+    font-size: 1rem;
     cursor: pointer;
     transition: 0.3s;
+    text-align: center;
 }
 
 .btn-connect:hover {
-    background: var(--primary-dark);
-    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+    background-color: var(--primary-hover);
+    transform: scale(1.02);
 }
 
-/* --- ALUMNI DASHBOARD SECTION --- */
-#alumni-section {
-    background: white;
-    margin: 20px 8%;
-    padding: 30px;
-    border-radius: 20px;
-    border: 1px dashed var(--primary);
-}
-
-.request-item {
-    background: #f8fafc;
-    padding: 15px;
-    border-radius: 12px;
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* Action Button in request list */
+.accept-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
 }
