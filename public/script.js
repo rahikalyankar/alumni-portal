@@ -115,7 +115,6 @@
 
 
 
-
 let currentUser = null;
 let activeChatId = null;
 
@@ -224,3 +223,4 @@ async function acceptReq(id) { await fetch('/api/accept-request', {method:'POST'
 async function connect(id) { await fetch('/api/connect', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({mentor_id:id})}); location.reload(); }
 
 init();
+
