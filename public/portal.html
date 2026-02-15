@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -34,7 +34,54 @@
         </div>
     </header>
 
+
+
+
     <main class="mentor-grid" id="mentorGrid"></main>
+    <script src="script.js"></script>
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ISE Connect | Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">ISE CONNECT</div>
+        <div id="user-info">
+            <span id="welcome-msg" style="font-weight:bold;"></span>
+            <a href="/auth/logout" class="logout-btn" style="color:red; margin-left:15px; text-decoration:none;">Logout</a>
+        </div>
+    </nav>
+
+    <div id="alumni-section" style="display:none; background:#f0f7ff; padding:30px; margin:20px 8%; border-radius:15px;">
+        <h2>Alumni Dashboard</h2>
+        <div id="request-list">Checking for student requests...</div>
+        <hr style="margin:20px 0;">
+        <h3>Update Your Profile</h3>
+        <form action="/api/register-mentor" method="POST">
+            <input type="text" name="expertise" placeholder="Skills (e.g. Java, Python)" required>
+            <input type="text" name="company" placeholder="Current Company" required>
+            <textarea name="bio" placeholder="How can you help students?"></textarea>
+            <button type="submit" class="btn-connect" style="width:200px; padding:10px; margin-top:10px;">List My Profile</button>
+        </form>
+    </div>
+
+    <header style="text-align:center; padding:40px;">
+        <h1>Industry Mentors</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by company or skill...">
+        </div>
+    </header>
+
+    <main class="mentor-grid" id="mentorGrid"></main>
+
     <script src="script.js"></script>
 </body>
 </html>
