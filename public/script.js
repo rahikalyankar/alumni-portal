@@ -1,66 +1,69 @@
-async function start() {
-    const uRes = await fetch('/api/user');
-    const user = await uRes.json();
+async function init() {
+    const userRes = await fetch('/api/user');
+    const user = await userRes.json();
     if (!user) { window.location.href = '/login.html'; return; }
 
+    // Set welcome message in your original span
     document.getElementById('welcome-msg').innerText = `Welcome, ${user.name}`;
 
+    // Show your original alumni section
     if (user.role === 'alumni') {
         document.getElementById('alumni-section').style.display = 'block';
-        loadMyRequests();
+        loadRequests();
     }
 
-    const mRes = await fetch('/api/mentors');
-    const mentors = await mRes.json();
+    const mentorRes = await fetch('/api/mentors');
+    const mentors = await mentorRes.json();
     renderMentors(mentors);
 }
 
-async function loadMyRequests() {
+async function loadRequests() {
     const res = await fetch('/api/my-requests');
     const reqs = await res.json();
-    const list = document.getElementById('request-list');
+    const listDiv = document.getElementById('request-list');
     
-    list.innerHTML = reqs.map(r => `
-        <div style="background:white; padding:15px; margin-top:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; border-left: 5px solid ${r.status === 'Accepted' ? '#10b981' : '#f59e0b'};">
-            <span>Student <b>${r.student_name}</b> wants to connect. (Status: ${r.status})</span>
+    // Injects the student name and an Accept button into your original div
+    listDiv.innerHTML = reqs.map(r => `
+        <div style="background:white; padding:15px; margin-top:10px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; border: 1px solid #ddd;">
+            <span>Student <b>${r.student_name}</b> sent a connect request! (${r.status})</span>
             ${r.status === 'Pending' ? 
-                `<button onclick="acceptReq(${r.id})" style="background:#6366f1; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">Accept</button>` 
-                : `<b style="color:#10b981;">Accepted ✓</b>`}
+                `<button onclick="handleAccept(${r.id})" style="background:#6366f1; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">Accept</button>` 
+                : `<span style="color:green; font-weight:bold;">Accepted ✓</span>`}
         </div>
-    `).join('') || "No requests yet.";
+    `).join('') || "No requests found.";
 }
 
-async function acceptReq(id) {
+async function handleAccept(id) {
     const res = await fetch('/api/accept-request', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ request_id: id })
     });
     if (res.ok) {
-        alert("Request Accepted!");
-        loadMyRequests();
+        alert("Mentorship request accepted!");
+        loadRequests(); // Refresh the original request-list div
     }
 }
 
 function renderMentors(mentors) {
     const grid = document.getElementById('mentorGrid');
     grid.innerHTML = mentors.map(m => `
-        <div class="card">
-            <span class="badge">${m.expertise}</span>
-            <h2>${m.name}</h2>
+        <div class="card" style="background:white; padding:20px; border-radius:15px; margin-bottom:15px; border: 1px solid #eee;">
+            <span class="badge" style="background:#eef2ff; color:#6366f1; padding:5px 10px; border-radius:10px; font-size:12px;">${m.expertise}</span>
+            <h2 style="margin:10px 0;">${m.name}</h2>
             <p><strong>${m.company}</strong></p>
-            <button class="btn-connect" onclick="sendReq(${m.user_id})">Connect</button>
+            <button class="btn-connect" onclick="sendRequest(${m.user_id})" style="width:100%; padding:10px; background:#6366f1; color:white; border:none; border-radius:10px; cursor:pointer; margin-top:10px;">Connect</button>
         </div>
     `).join('');
 }
 
-async function sendReq(id) {
+async function sendRequest(id) {
     const res = await fetch('/api/connect', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ mentor_id: id })
     });
-    if (res.ok) alert("Request Sent!");
+    if (res.ok) alert("Request sent successfully!");
 }
 
-start();
+init();
