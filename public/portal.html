@@ -1,58 +1,13 @@
 <!-- 
 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>ISE Connect | Portal</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <nav>
-        <div class="logo">ISE CONNECT</div>
-        <div id="user-info">
-            <span id="welcome-msg" style="font-weight:bold;"></span>
-            <a href="/auth/logout" class="logout-btn" style="color:red; margin-left:15px; text-decoration:none;">Logout</a>
-        </div>
-    </nav>
-
-    <div id="alumni-section" style="display:none; background:#f0f7ff; padding:30px; margin:20px 8%; border-radius:15px;">
-        <h2>Alumni Dashboard</h2>
-        <div id="request-list">Checking for student requests...</div>
-        <hr style="margin:20px 0;">
-        <h3>Update Your Profile</h3>
-        <form action="/api/register-mentor" method="POST">
-            <input type="text" name="expertise" placeholder="Skills (e.g. Java, Python)" required>
-            <input type="text" name="company" placeholder="Current Company" required>
-            <textarea name="bio" placeholder="How can you help students?"></textarea>
-            <button type="submit" class="btn-connect" style="width:200px; padding:10px; margin-top:10px;">List My Profile</button>
-        </form>
-    </div>
-
-    <header style="text-align:center; padding:40px;">
-        <h1>Industry Mentors</h1>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search by company or skill...">
-        </div>
-    </header>
-
-    <main class="mentor-grid" id="mentorGrid"></main>
-
-    <script src="script.js"></script>
-</body>
-</html> -->
-
-
-
-
 
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ISE Connect | Portal</title>
+    <title> Connect | Portal</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -90,6 +45,53 @@
     </header>
 
     <main class="mentor-grid" id="mentorGrid"></main>
+
+    <script src="script.js"></script>
+</body>
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ISE Connect | Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">ISE CONNECT</div>
+        <div id="user-info">
+            <span id="welcome-msg" style="font-weight:bold;"></span>
+            <a href="/auth/logout" class="logout-btn" style="color:red; margin-left:15px; text-decoration:none;">Logout</a>
+        </div>
+    </nav>
+
+    <div id="alumni-section" style="display:none; background:#f0f7ff; padding:30px; margin:20px 8%; border-radius:15px;">
+        <h2>Alumni Dashboard</h2>
+        <div id="request-list"></div>
+    </div>
+
+    <header style="text-align:center; padding:40px;">
+        <h1>Industry Mentors</h1>
+        <div class="search-container"><input type="text" id="searchInput" placeholder="Search..."></div>
+    </header>
+
+    <main class="mentor-grid" id="mentorGrid"></main>
+
+    <div id="chatBox" style="display:none; position:fixed; bottom:20px; right:20px; width:300px; background:white; border:2px solid var(--primary); border-radius:15px; z-index:1000; box-shadow: var(--shadow);">
+        <div style="background:var(--primary); color:white; padding:10px; border-radius:12px 12px 0 0; display:flex; justify-content:space-between;">
+            <span id="chatPartner">Chat</span>
+            <button onclick="closeChat()" style="background:none; border:none; color:white; cursor:pointer;">X</button>
+        </div>
+        <div id="chatMessages" style="height:200px; overflow-y:auto; padding:10px; font-size:14px;"></div>
+        <div style="padding:10px; display:flex;">
+            <input type="text" id="chatInput" placeholder="Type a message..." style="flex:1; padding:5px;">
+            <button onclick="sendMessage()" style="padding:5px;">Send</button>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
